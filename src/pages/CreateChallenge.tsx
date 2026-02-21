@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Trophy } from "lucide-react";
+import { format, addDays, isAfter, parseISO } from "date-fns";
 import {
   Card,
   CardContent,
@@ -35,6 +36,11 @@ const CreateChallenge: React.FC = () => {
   const [visibility, setVisibility] = useState("PUBLIC");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const today = format(new Date(), "yyyy-MM-dd");
+  const minEndDate = startDate
+    ? format(addDays(parseISO(startDate), 1), "yyyy-MM-dd")
+    : today;
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -241,7 +247,18 @@ const CreateChallenge: React.FC = () => {
                     id="startDate"
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    min={today}
+                    onChange={(e) => {
+                      const newStartDate = e.target.value;
+                      setStartDate(newStartDate);
+                      if (
+                        endDate &&
+                        newStartDate &&
+                        !isAfter(parseISO(endDate), parseISO(newStartDate))
+                      ) {
+                        setEndDate("");
+                      }
+                    }}
                     className={errors.startDate ? "border-destructive" : ""}
                   />
                   {errors.startDate && (
@@ -257,6 +274,8 @@ const CreateChallenge: React.FC = () => {
                     id="endDate"
                     type="date"
                     value={endDate}
+                    min={minEndDate}
+                    disabled={!startDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     className={errors.endDate ? "border-destructive" : ""}
                   />
