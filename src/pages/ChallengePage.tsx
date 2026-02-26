@@ -35,7 +35,7 @@ const ChallengePage: React.FC = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [challenge, setChallenge] = useState<any>(null);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,8 +50,8 @@ const ChallengePage: React.FC = () => {
     setIsLoading(true);
     try {
       const challengeResponse = await challengeApi.getById(id!);
-      const leaderboardResponse = await dashboardApi.getChallengeLeaderboard(id!);
-      const progressResponse = await dashboardApi.getChallengeProgress(id!);
+      const leaderboardResponse =
+        await dashboardApi.getChallengeLeaderboard(id!);
 
       if (challengeResponse.success && challengeResponse.data) {
         setChallenge(challengeResponse.data);
@@ -60,12 +60,7 @@ const ChallengePage: React.FC = () => {
       if (leaderboardResponse.success && leaderboardResponse.data) {
         setLeaderboard(leaderboardResponse.data);
       }
-
-      if (progressResponse.success && progressResponse.data) {
-        setChartData(progressResponse.data);
-      }
-    } catch (error: any) {
-      console.error("Failed to load challenge:", error);
+    } catch {
       toast({
         title: "Failed to load challenge",
         description: "Please try again.",
@@ -144,10 +139,10 @@ const ChallengePage: React.FC = () => {
     );
   }
 
-  const daysRemaining = Math.max(0, Math.ceil(
-    (new Date(challenge.endDate).getTime() - new Date().getTime()) /
-    (1000 * 60 * 60 * 24)
-  ));
+  const daysRemaining = Math.ceil(
+    (new Date(challenge.endDate).getTime() - Date.now()) /
+      (1000 * 60 * 60 * 24)
+  );
 
   const totalDays = Math.max(1, Math.ceil(
     (new Date(challenge.endDate).getTime() -
@@ -161,8 +156,17 @@ const ChallengePage: React.FC = () => {
     (member) => member.userId === user?.id
   );
 
+  const progress = Math.round(
+    ((totalDays - daysRemaining) / totalDays) * 100
+  );
+
+  /** ✅ FIX: membership check */
+  const isMember = leaderboard.some(
+    (member) => member.userId === user?.id
+  );
+
   const difficultyDisplay =
-    challenge.difficultyFilter && challenge.difficultyFilter.length > 0
+    challenge.difficultyFilter?.length > 0
       ? challenge.difficultyFilter.join(", ")
       : "Any";
 
@@ -199,7 +203,7 @@ const ChallengePage: React.FC = () => {
                 </Button>
               )}
 
-            {!isMember ? (
+            {!isMember && (
               <Button
                 variant="outline"
                 size="sm"
@@ -214,7 +218,9 @@ const ChallengePage: React.FC = () => {
                 )}
                 Join Challenge
               </Button>
-            ) : (
+            )}
+
+            {isMember && (
               <Badge
                 variant="outline"
                 className="bg-success/10 text-success"
@@ -228,13 +234,7 @@ const ChallengePage: React.FC = () => {
         {/* Progress */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Challenge Progress</span>
-              <span className="text-sm text-muted-foreground">
-                {Math.max(0, totalDays - daysRemaining)} of {totalDays} days
-              </span>
-            </div>
-            <Progress value={progress} className="h-3" />
+            <Progress value={progress} />
           </CardContent>
         </Card>
 
