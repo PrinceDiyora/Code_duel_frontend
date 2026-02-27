@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import {
@@ -20,11 +21,9 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { leetcodeApi, authApi } from "@/lib/api";
-
-import { useAuth } from "@/contexts/src/pages/src/AuthContext";
-
+import { leetcodeApi, authApi, SessionStatus } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { getErrorMessage } from "@/lib/utils";
 import { ValidatedInput } from "@/components/common/ValidatedInput";
 import { useDelayedNavigate } from "@/hooks/use-delayed-navigate";
 
@@ -34,6 +33,7 @@ const Settings: React.FC = () => {
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
   const [showErrors, setShowErrors] = useState(false);
   const delayedNavigate = useDelayedNavigate();
   const [sessionStatus, setSessionStatus] = useState<any>(null);
@@ -50,11 +50,7 @@ const Settings: React.FC = () => {
     user?.leetcodeUsername || ""
   );
 
-  useEffect(() => {
-    checkSessionStatus();
-  }, []);
-
-  const checkSessionStatus = async () => {
+  const checkSessionStatus = useCallback(async () => {
     try {
       const response = await leetcodeApi.getSessionStatus();
       if (response.success) {
@@ -63,9 +59,14 @@ const Settings: React.FC = () => {
     } catch (error) {
       console.error("Failed to check session status:", error);
     }
-  };
+  }, []);
 
-  const handleSaveLeetCodeSession = async () => {
+  useEffect(() => {
+    checkSessionStatus();
+  }, [checkSessionStatus]);
+
+
+  const handleSaveLeetCodeSession = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await leetcodeApi.storeSession(
@@ -84,6 +85,7 @@ const Settings: React.FC = () => {
         checkSessionStatus();
         delayedNavigate(-1);
       }
+    } catch (error: unknown) {
     } catch (error: any) {
       if (error.message === "Network Error") {
         console.warn("Backend not found. Using mock session save for UI preview.");
@@ -98,16 +100,15 @@ const Settings: React.FC = () => {
       }
       toast({
         title: "Failed to save session",
-        description:
-          error.response?.data?.message || "Please check your credentials.",
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [leetcodeSession, toast, checkSessionStatus]);
 
-  const handleInvalidateSession = async () => {
+  const handleInvalidateSession = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await leetcodeApi.invalidateSession();
@@ -119,17 +120,18 @@ const Settings: React.FC = () => {
         });
         setSessionStatus(null);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Failed to invalidate session",
-        description: error.response?.data?.message || "Please try again.",
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
+  const handleUpdateProfile = useCallback(async () => {
   const handleUpdateProfile = async () => {
     if (!leetcodeUsername) {
       setShowErrors(true);
@@ -152,6 +154,7 @@ const Settings: React.FC = () => {
         // Redirect back after successful update
         delayedNavigate(-1);
       }
+    } catch (error: unknown) {
     } catch (error: any) {
       if (error.message === "Network Error") {
         console.warn("Backend not found. Using mock profile update for UI preview.");
@@ -168,13 +171,13 @@ const Settings: React.FC = () => {
       }
       toast({
         title: "Failed to update profile",
-        description: error.response?.data?.message || "Please try again.",
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [leetcodeUsername, toast, updateUser, user]);
 
   return (
     <Layout>
@@ -304,10 +307,10 @@ const Settings: React.FC = () => {
                   <div className="space-y-2">
                     <Label htmlFor="cookie">LEETCODE_SESSION Cookie</Label>
                     <Input
-                      id="cookie"
-                      type="password"
-                      value={leetcodeSession.cookie}
-                      onChange={(e) =>
+                    id="cookie"
+                    type="password"
+                    value={leetcodeSession.cookie}
+                    onChange={(e) =>
                         setLeetcodeSession({
                           ...leetcodeSession,
                           cookie: e.target.value,
