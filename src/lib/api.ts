@@ -59,7 +59,7 @@ interface LoginResponse {
   token: string;
 }
 
-interface RegisterResponse extends LoginResponse {}
+interface RegisterResponse extends LoginResponse { }
 
 interface ChallengeResponse {
   id: string;
@@ -193,6 +193,29 @@ export const challengeApi = {
       {
         status,
       }
+    );
+    return response.data;
+  },
+
+  generateInvite: async (
+    challengeId: string,
+    data: { expiresInHours?: number; maxUses?: number }
+  ) => {
+    const response = await api.post<
+      ApiResponse<{
+        code: string;
+        expiresAt: string;
+        maxUses: number;
+        challengeId: string;
+      }>
+    >(`/api/challenges/${challengeId}/invite`, data);
+    return response.data;
+  },
+
+  joinByCode: async (code: string) => {
+    const response = await api.post<ApiResponse<any>>(
+      "/api/challenges/join-by-code",
+      { code }
     );
     return response.data;
   },

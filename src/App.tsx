@@ -19,6 +19,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Leetcode from "./pages/Leetcode";
+import JoinByCode from "./pages/JoinByCode";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,7 @@ const queryClient = new QueryClient();
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated ,isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return null;
   }
@@ -40,7 +41,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
 // Auth Route wrapper (redirect if already logged in)
 const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated , isLoading} = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return null;
   }
@@ -132,6 +133,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/join/:code"
+        element={
+          <ProtectedRoute>
+            <JoinByCode />
           </ProtectedRoute>
         }
       />

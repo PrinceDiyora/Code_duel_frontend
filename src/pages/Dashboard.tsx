@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { dashboardApi, challengeApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Stats } from "@/types";
+import JoinByCodeDialog from "@/components/challenge/JoinByCodeDialog";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -117,12 +118,15 @@ const Dashboard: React.FC = () => {
               Track your daily coding progress and stay consistent
             </p>
           </div>
-          <Button asChild className="gradient-primary sm:w-auto w-full">
-            <Link to="/create-challenge" className="gap-2">
-              <Plus className="h-4 w-4" />
-              New Challenge
-            </Link>
-          </Button>
+          <div className="flex gap-2 sm:flex-row flex-col">
+            <JoinByCodeDialog />
+            <Button asChild className="gradient-primary sm:w-auto w-full">
+              <Link to="/create-challenge" className="gap-2">
+                <Plus className="h-4 w-4" />
+                New Challenge
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -200,7 +204,7 @@ const Dashboard: React.FC = () => {
               description="Create or join a challenge to start competing with others and stay motivated!"
               action={{
                 label: "Create Challenge",
-                onClick: () => {},
+                onClick: () => { },
               }}
             />
           )}

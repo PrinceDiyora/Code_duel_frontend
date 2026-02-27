@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { challengeApi, dashboardApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import InviteDialog from "@/components/challenge/InviteDialog";
 
 const difficultyColors = {
   easy: "bg-success/10 text-success border-success/20",
@@ -140,13 +141,13 @@ const ChallengePage: React.FC = () => {
 
   const daysRemaining = Math.ceil(
     (new Date(challenge.endDate).getTime() - Date.now()) /
-      (1000 * 60 * 60 * 24)
+    (1000 * 60 * 60 * 24)
   );
 
   const totalDays = Math.ceil(
     (new Date(challenge.endDate).getTime() -
       new Date(challenge.startDate).getTime()) /
-      (1000 * 60 * 60 * 24)
+    (1000 * 60 * 60 * 24)
   );
 
   const progress = Math.round(
@@ -195,6 +196,10 @@ const ChallengePage: React.FC = () => {
                   Activate
                 </Button>
               )}
+
+            {challenge.ownerId === user?.id && (
+              <InviteDialog challengeId={challenge.id} />
+            )}
 
             {!isMember && (
               <Button
