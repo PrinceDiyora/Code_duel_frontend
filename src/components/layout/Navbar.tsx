@@ -62,7 +62,9 @@ const Navbar: React.FC = () => {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary transition-transform duration-200 group-hover:scale-105">
             <Code2 className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="hidden text-lg sm:inline-block">LeetCode Tracker</span>
+          <span className="hidden text-lg sm:inline-block">
+            LeetCode Tracker
+          </span>
         </Link>
 
         {isAuthenticated && (
@@ -151,22 +153,27 @@ const Navbar: React.FC = () => {
           )}
 
           {/* Theme toggle */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9">
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-9 w-9"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
 
           {/* Auth buttons / user avatar */}
           {isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-
                 <Button
                   variant="ghost"
                   className="relative h-9 w-9 rounded-full transition-transform duration-200 hover:scale-105"
                 >
-
                   <Avatar className="h-9 w-9">
                     <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -177,7 +184,9 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
                     <p className="font-medium">{user.name}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.email}
+                    </p>
                   </div>
                 </div>
                 <DropdownMenuSeparator />

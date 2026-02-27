@@ -119,7 +119,8 @@ const CreateChallenge: React.FC = () => {
       const response = await challengeApi.create({
         name: sanitizedName,
         description:
-          sanitizedDescription || `${sanitizedName} - Solve ${sanitizedDailyTarget} problem(s) daily`,
+          sanitizedDescription ||
+          `${sanitizedName} - Solve ${sanitizedDailyTarget} problem(s) daily`,
         minSubmissionsPerDay: sanitizedDailyTarget,
         difficultyFilter,
         uniqueProblemConstraint: true,
@@ -141,10 +142,7 @@ const CreateChallenge: React.FC = () => {
     } catch (error: unknown) {
       toast({
         title: "Failed to create challenge",
-        description: getErrorMessage(error),
-        description: DOMPurify.sanitize(
-          error.response?.data?.message || error.message || "Please try again."
-        ),
+        description: DOMPurify.sanitize(getErrorMessage(error)),
         variant: "destructive",
       });
     } finally {
@@ -181,7 +179,7 @@ const CreateChallenge: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="name">Challenge Name</Label>
                 <Input
-                id="name"
+                  id="name"
                   placeholder="e.g., January Grind, Hard Mode Warriors"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -223,7 +221,6 @@ const CreateChallenge: React.FC = () => {
                   </p>
                 </div>
 
-                    
                 <div className="space-y-2">
                   <Label htmlFor="difficulty">Minimum Difficulty</Label>
                   <Select value={difficulty} onValueChange={setDifficulty}>
@@ -312,15 +309,20 @@ const CreateChallenge: React.FC = () => {
                 <RadioGroup value={visibility} onValueChange={setVisibility}>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="PUBLIC" id="public" />
-                    <Label htmlFor="public" className="cursor-pointer">Public</Label>
+                    <Label htmlFor="public" className="cursor-pointer">
+                      Public
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="PRIVATE" id="private" />
-                    <Label htmlFor="private" className="cursor-pointer">Private</Label>
+                    <Label htmlFor="private" className="cursor-pointer">
+                      Private
+                    </Label>
                   </div>
                 </RadioGroup>
                 <p className="text-xs text-muted-foreground">
-                  Public challenges are visible to all users. Private challenges are only visible to the owner and invited members.
+                  Public challenges are visible to all users. Private challenges
+                  are only visible to the owner and invited members.
                 </p>
               </div>
 
@@ -339,7 +341,11 @@ const CreateChallenge: React.FC = () => {
                   disabled={
                     isLoading ||
                     Object.keys(errors).length > 0 ||
-                    !name || !dailyTarget || !penaltyAmount || !startDate || !endDate
+                    !name ||
+                    !dailyTarget ||
+                    !penaltyAmount ||
+                    !startDate ||
+                    !endDate
                   }
                 >
                   {isLoading ? (
