@@ -28,23 +28,23 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const validate = () => {
-    const nextErrors: { identifier?: string; password?: string } = {};
+    const newErrors: { identifier?: string; password?: string } = {};
 
     if (!identifier.trim()) {
-      nextErrors.identifier = 'Email or username is required';
+      newErrors.identifier = 'Email or username is required';
     } else if (identifier.includes('@') && !isEmail(identifier)) {
       // Only enforce email format if the user has typed an '@' symbol
-      nextErrors.identifier = 'Please enter a valid email address';
+      newErrors.identifier = 'Please enter a valid email address';
     }
 
     if (!password) {
-      nextErrors.password = "Password is required";
+      newErrors.password = "Password is required";
     } else if (password.length < 6) {
-      nextErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Password must be at least 6 characters";
     }
 
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
