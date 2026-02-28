@@ -10,6 +10,16 @@ import { useState } from "react";
 import { leetcodeApi } from "@/lib/api";
 import { getErrorMessage } from "@/lib/utils";
 
+interface LeetCodeSubmission {
+  id: string | number;
+  title: string;
+  titleSlug: string;
+  lang: string;
+  timestamp: number;
+  status?: string;
+  statusDisplay?: string;
+}
+
 // ✅ Centralized React Query hooks — cached, auto-refreshing
 import {
   useLeetcodeProfile,
@@ -160,7 +170,7 @@ const Leetcode = () => {
                   </div>
                 ) : (
                   <ul className="mt-4 space-y-3">
-                    {recentSubmissions.map((s: any) => (
+                    {recentSubmissions.map((s: LeetCodeSubmission) => (
                       <li
                         key={s.id}
                         className="flex items-center justify-between"

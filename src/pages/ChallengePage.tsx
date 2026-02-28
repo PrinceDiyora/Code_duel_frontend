@@ -21,7 +21,8 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Challenge } from "@/types";
+import { Challenge, ChartData, LeaderboardEntry } from "@/types";
+import { getErrorMessage } from "@/lib/utils";
 
 type ChallengeDetails = Challenge & {
   description?: string;
@@ -56,7 +57,7 @@ const ChallengePage: React.FC = () => {
   const isLoading = challengeLoading || leaderboardLoading;
 
   // Chart data placeholder (can be replaced with a React Query hook later)
-  const chartData: any[] = [];
+  const chartData: ChartData[] = [];
 
   const handleJoinChallenge = async () => {
     if (!id) return;
@@ -67,13 +68,10 @@ const ChallengePage: React.FC = () => {
         description: "You have successfully joined the challenge.",
       });
       // ✅ No need to manually reload — cache auto-invalidates
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Failed to join challenge",
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Please try again.",
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     }
@@ -88,13 +86,10 @@ const ChallengePage: React.FC = () => {
         description: "Your challenge is now active.",
       });
       // ✅ No need to manually reload — cache auto-invalidates
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Failed to activate challenge",
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Please try again.",
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     }
@@ -139,7 +134,7 @@ const ChallengePage: React.FC = () => {
 
   const isMember = useMemo(() => {
     if (!user) return false;
-    return leaderboard.some((member: any) => member.userId === user.id);
+    return leaderboard.some((member: LeaderboardEntry) => member.userId === user.id);
   }, [leaderboard, user]);
 
   if (isLoading) {
@@ -283,7 +278,7 @@ const ChallengePage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 {leaderboard.length > 0 ? (
-                  leaderboard.map((member: any, index: number) => (
+                  leaderboard.map((member: LeaderboardEntry, index: number) => (
                     <div
                       key={member.userId || `member-${index}`}
                       className="flex justify-between p-3 border rounded-lg mb-2"
@@ -315,7 +310,7 @@ const ChallengePage: React.FC = () => {
         onOpenChange={setIsInviteDialogOpen}
         challengeId={challenge.id}
         challengeName={challenge.name}
-        existingMemberIds={leaderboard.map((member: any) => member.userId)}
+        existingMemberIds={leaderboard.map((member: LeaderboardEntry) => member.userId)}
       />
     </Layout>
   );

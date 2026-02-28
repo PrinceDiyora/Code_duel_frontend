@@ -12,7 +12,7 @@ import InviteRequests from "@/components/dashboard/InviteRequests";
 import EmptyState from "@/components/common/EmptyState";
 import { Skeleton } from "@/components/common/Skeleton";
 import { useAuth } from "@/contexts/AuthContext";
-import { Stats } from "@/types";
+import { Stats, Challenge } from "@/types";
 
 // ✅ Centralized React Query hooks — single source of truth
 import { useDashboardStats, useActivityHeatmap, useSubmissionChart } from "@/hooks/useDashboardData";
@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
 
           {challenges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {challenges.slice(0, 3).map((challenge: any) => (
+              {challenges.slice(0, 3).map((challenge: Challenge) => (
                 <ChallengeCard key={challenge.id} challenge={challenge} />
               ))}
             </div>
