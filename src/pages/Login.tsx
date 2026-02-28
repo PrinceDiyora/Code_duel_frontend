@@ -28,13 +28,13 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const validate = () => {
-    const newErrors: { identifier?: string; password?: string } = {};
+    const nextErrors: { identifier?: string; password?: string } = {};
 
     if (!identifier.trim()) {
-      newErrors.identifier = 'Email or username is required';
+      nextErrors.identifier = 'Email or username is required';
     } else if (identifier.includes('@') && !isEmail(identifier)) {
       // Only enforce email format if the user has typed an '@' symbol
-      newErrors.identifier = 'Please enter a valid email address';
+      nextErrors.identifier = 'Please enter a valid email address';
     }
 
     if (!password) {
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
         description: 'Successfully logged in.',
         variant: 'success',
       });
-      delayedNavigate('/');
+      // delayedNavigate('/');
     } catch {
       toast({
         title: 'Login failed',
