@@ -139,11 +139,16 @@ const Login: React.FC = () => {
                 )}
               </div>
 
-              <Button
-                type="submit"
-                className="w-full gradient-primary"
-                disabled={isLoading}
-              >
+              <div className="flex justify-end">
+                <Link 
+                  to="/forgot-password" 
+                  className="text-xs text-primary hover:underline font-medium"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

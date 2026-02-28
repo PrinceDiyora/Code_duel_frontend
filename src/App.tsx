@@ -4,22 +4,27 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import CodeEditor from "./components/CodeEditor";
+
+// Pages
+import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import ChallengePage from "./pages/ChallengePage";
+import CreateChallenge from "./pages/CreateChallenge";
+import Leaderboard from "./pages/Leaderboard";
+import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
+import Leetcode from "./pages/Leetcode";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 
-import CodeEditor from "@/components/CodeEditor";
-import Index from "@/pages/Index";
-import Dashboard from "@/pages/Dashboard";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import ChallengePage from "@/pages/ChallengePage";
-import CreateChallenge from "@/pages/CreateChallenge";
-import Leaderboard from "@/pages/Leaderboard";
-import Settings from "@/pages/Settings";
-import Profile from "@/pages/Profile";
-import Leetcode from "@/pages/Leetcode";
-import NotFound from "@/pages/NotFound";
+
 
 const queryClient = new QueryClient();
 
@@ -71,6 +76,8 @@ const AppRoutes: React.FC = () => {
           </AuthRoute>
         }
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route
         path="/dashboard"
