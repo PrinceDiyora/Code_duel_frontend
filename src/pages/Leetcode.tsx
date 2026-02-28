@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import { useAuth } from "@/contexts/AuthContext";
+import { Database, Settings } from "lucide-react";
 import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap";
 import EmptyState from "@/components/common/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { leetcodeApi } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils";
 
 // ✅ Centralized React Query hooks — cached, auto-refreshing
 import {
@@ -60,17 +62,21 @@ const Leetcode = () => {
 
         {!user?.leetcodeUsername && (
           <EmptyState
+            icon={Settings}
             title="No LeetCode username"
             description="Set your LeetCode username in settings to fetch profile data."
             action={{
               label: "Go to Settings",
-              onClick: () => { },
+              onClick: () => {
+                navigate("/settings");
+              },
             }}
           />
         )}
 
         {user?.leetcodeUsername && !leetcodeProfile && !isLoading && (
           <EmptyState
+            icon={Database}
             title="No profile data"
             description="Make sure you've stored a LeetCode session in the backend."
             action={{
@@ -193,7 +199,7 @@ const Leetcode = () => {
 
 export default Leetcode;
 
-function formatSubmissionCalendar(calendar: any) {
+function formatSubmissionCalendar(calendar: string | Record<string, number> | unknown) {
   if (!calendar) return [];
 
   // The backend returns an object mapping dateStr -> count (or nested structure)
@@ -237,11 +243,8 @@ function TestConnectionButton({ username }: { username: string }) {
           description: res.message || res.error || "Failed to connect",
         });
       }
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message || "Request failed",
-      });
+    } catch (err: unknown) {
+      toast({ title: "Error", description: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }

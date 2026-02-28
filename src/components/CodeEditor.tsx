@@ -1,9 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDuelStore } from "@/store/duelStore";
 import { challengeKeys } from "@/hooks/useChallenges";
 import { dashboardKeys } from "@/hooks/useDashboardData";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 // ============================================================================
 // CodeEditor — Now integrated with centralized duel state
@@ -14,6 +21,7 @@ import { dashboardKeys } from "@/hooks/useDashboardData";
 
 export default function CodeEditor() {
   const queryClient = useQueryClient();
+  const [theme, setTheme] = useState<string>("vs-dark");
 
   // ✅ Read/write from global Zustand store instead of local state
   const currentCode = useDuelStore((state) => state.currentCode);
@@ -68,6 +76,15 @@ export default function CodeEditor() {
     return () => window.removeEventListener("keydown", preventSave);
   }, []);
 
+  // 🔹 Auto-save every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      localStorage.setItem("duel-code", currentCode);
+      console.log("Auto-saved code!");
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [currentCode]);
+
   // 🔹 Monaco Shortcuts
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     // Ctrl + Enter → Run
@@ -99,29 +116,49 @@ export default function CodeEditor() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Live Code Duel</h2>
+      <h2 className="text-2xl font-bold mb-4">Live Code Duel</h2>
 
       {/* 🔹 Shortcut Info */}
       <div style={{ fontSize: "14px", color: "gray", marginBottom: "8px" }}>
         Shortcuts: Ctrl+Enter (Run) | Ctrl+S (Save) | Ctrl+Shift+F (Format)
       </div>
 
-      <select
-        value={currentLanguage}
-        onChange={(e) => setLanguage(e.target.value)}
-      >
-        <option value="javascript">JavaScript</option>
-        <option value="typescript">TypeScript</option>
-        <option value="python">Python</option>
-        <option value="cpp">C++</option>
-      </select>
+      {/* 🔹 Controls: Reset + Theme */}
+      <div style={{ marginBottom: "10px" }}>
+        <button
+          onClick={() => setCode("// Start coding here...")}
+          style={{ marginRight: "10px" }}
+        >
+          Reset
+        </button>
+        <button
+          onClick={() => setTheme(theme === "vs-dark" ? "light" : "vs-dark")}
+        >
+          Toggle Theme
+        </button>
+      </div>
+
+      {/* 🔹 Language Selector (Shadcn/UI Select) */}
+      <div className="w-[180px] mb-4">
+        <Select value={currentLanguage} onValueChange={setLanguage}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="javascript">JavaScript</SelectItem>
+            <SelectItem value="typescript">TypeScript</SelectItem>
+            <SelectItem value="python">Python</SelectItem>
+            <SelectItem value="cpp">C++</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div style={{ marginTop: "10px" }}>
         <Editor
           height="500px"
           language={currentLanguage}
           value={currentCode}
-          theme="vs-dark"
+          theme={theme}
           onChange={(value) => setCode(value || "")}
           onMount={handleEditorDidMount}
         />
